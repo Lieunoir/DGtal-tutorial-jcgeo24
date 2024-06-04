@@ -30,6 +30,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
     <body class="sidebar-visible no-js">
     <div id="body-container">
@@ -88,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="setup.html" class="active"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="thinning.html"><strong aria-hidden="true">2.</strong> Practical 1 : Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Practical 2 : Estimators and differential calculus</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="setup.html" class="active"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -174,11 +176,28 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="setup"><a class="header" href="#setup">Setup</a></h1>
+<h2 id="requirements"><a class="header" href="#requirements">Requirements</a></h2>
+<ul>
+<li>c++ compiler</li>
+<li>cmake</li>
+<li>boost headers</li>
+<li>openGL headers (for polyscope visualization)</li>
+</ul>
+<h2 id="building-the-code"><a class="header" href="#building-the-code">Building the code</a></h2>
+<p>First clone the repo at https://github.com/Lieunoir/DGtal-tutorial-jcgeo24</p>
+<p>We setup in Release mode otherwise some parts will be running way too slow</p>
+<pre><code class="language-bash">mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
                             <a rel="next prefetch" href="thinning.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
@@ -190,6 +209,9 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
                     <a rel="next prefetch" href="thinning.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
