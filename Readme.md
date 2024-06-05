@@ -13,3 +13,7 @@ mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
+
+## Instructions
+
+All isntructions can be found at :  https://lieunoir.github.io/DGtal-tutorial-jcgeo24/

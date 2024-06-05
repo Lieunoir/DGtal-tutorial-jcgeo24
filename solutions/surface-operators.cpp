@@ -70,14 +70,7 @@ void createShape(std::string polynomial, double h) {
   // Create DGtal surface mesh object.
   surfmesh =
       SurfMesh(positions.begin(), positions.end(), faces.begin(), faces.end());
-
-  /*
-
-  TODO attach normals to surface mesh
-
-
-  */
-
+  surfmesh.setFaceNormals(true_normals.begin(), true_normals.end());
   std::cout << surfmesh << std::endl;
   std::cout << "number of non-manifold Edges = "
             << surfmesh.computeNonManifoldEdges().size() << std::endl;
@@ -87,39 +80,95 @@ void createShape(std::string polynomial, double h) {
 }
 
 void estimateAreaMassmatrix() {
-  /*
-
-  TODO fill function
-
-
-  */
+  ncFEM calculus(surfmesh);
+  ncFEM::LinearOperator M = calculus.M0();
+  DenseVector ones = DenseVector::Ones(surfmesh.nbVertices());
+  std::cout << "Estimated area : " << ones.transpose() * M * ones << std::endl;
 }
 
 void diffuseHeat() {
-  /*
-
-  TODO fill function
-
-
-  */
+  ncFEM calculus(surfmesh);
+  ncFEM::LinearOperator M = calculus.M0();
+  ncFEM::LinearOperator L = calculus.L0();
+  DenseVector source = DenseVector::Zero(surfmesh.nbVertices());
+  source(1) = 1.;
+  EigenLinearAlgebraBackend::SolverSimplicialLDLT solver;
+  double dt = GridStep * GridStep;
+  solver.compute(M - dt * L);
+  DenseVector diffused = solver.solve(M * source);
+  psMesh->addVertexScalarQuantity("Source", source);
+  psMesh->addVertexScalarQuantity("Diffused heat", diffused);
 }
 
 void smoothInterpolation() {
-  /*
+  ncFEM calculus(surfmesh);
+  ncFEM::LinearOperator L = calculus.L0();
+  DenseVector g = DenseVector::Zero(surfmesh.nbVertices());
+  DC::IntegerVector b = DC::IntegerVector::Zero(g.rows());
 
-  TODO fill function
+  // Add 4 arbitrary sources
+  g(1) = 10.;
+  g(50) = -10.;
+  g(100) = 10.;
+  g(150) = -10.;
+  b(1) = 1;
+  b(50) = 1;
+  b(100) = 1;
+  b(150) = 1;
 
-
-  */
+  // Solve Δu=0 with g as boundary conditions
+  ncFEM::LinearAlgebraBackend::SolverSimplicialLDLT solver;
+  ncFEM::LinearOperator L_dirichlet = DC::dirichletOperator(L, b);
+  solver.compute(L_dirichlet);
+  ASSERT(solver.info() == Eigen::Success);
+  DenseVector g_dirichlet = DC::dirichletVector(L, g, b, g);
+  DenseVector x_dirichlet = solver.solve(g_dirichlet);
+  DenseVector u = DC::dirichletSolution(x_dirichlet, b, g);
+  psMesh->addVertexScalarQuantity("To interpolate", g);
+  psMesh->addVertexScalarQuantity("Interpolated", u);
 }
 
 void heatGeodesics() {
-  /*
+  surfmesh.computeVertexNormalsFromFaceNormals();
+  CC calculus(surfmesh);
+  CC::LinearOperator L = calculus.L0();
+  CC::LinearOperator M = calculus.M0();
+  CC::LinearOperator Grad = calculus.Sharp() * calculus.D0();
+  CC::LinearOperator Div =
+      calculus.D0().transpose() * calculus.M1() * calculus.Flat();
 
-  TODO fill function
+  DenseVector source = DenseVector::Zero(surfmesh.nbVertices());
+  source(0) = 1.;
+  EigenLinearAlgebraBackend::SolverSimplicialLDLT solver;
+  double dt = GridStep * GridStep;
+  solver.compute(M - dt * L);
+  EigenLinearAlgebraBackend::DenseVector diffused = solver.solve(M * source);
+  psMesh->addVertexScalarQuantity("Geodesics heat source", source);
+  psMesh->addVertexScalarQuantity("Geodesics diffused heat", diffused);
 
+  DenseVector grads = Grad * diffused;
+  for (int i = 0; i < surfmesh.nbFaces(); i++) {
+    double c0 = grads(3 * i);
+    double c1 = grads(3 * i + 1);
+    double c2 = grads(3 * i + 2);
+    double norm = sqrt(c0 * c0 + c1 * c1 + c2 * c2);
+    grads(3 * i) = c0 / norm;
+    grads(3 * i + 1) = c1 / norm;
+    grads(3 * i + 2) = c2 / norm;
+  }
+  DenseVector divs = Div * grads;
 
-  */
+  DenseVector g = DenseVector::Zero(surfmesh.nbVertices());
+  DC::IntegerVector b = DC::IntegerVector::Zero(g.rows());
+  g(0) = 0.;
+  b(0) = 1;
+  CC::LinearOperator L_dirichlet = DC::dirichletOperator(L, b);
+  solver.compute(L_dirichlet);
+  ASSERT(solver.info() == Eigen::Success);
+  DenseVector g_dirichlet = DC::dirichletVector(L, divs, b, g);
+  DenseVector x_dirichlet = solver.solve(g_dirichlet);
+  DenseVector u = DC::dirichletSolution(x_dirichlet, b, g);
+  psMesh->addVertexScalarQuantity("Geodesics", u);
 }
 
 /// Defines the GUI buttons and reactions.
