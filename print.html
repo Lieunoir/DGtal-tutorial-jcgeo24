@@ -91,7 +91,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li><li class="chapter-item expanded "><a href="estimators/operators.html"><strong aria-hidden="true">3.3.</strong> Differential calculus operators</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -177,6 +177,12 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>This is a shot tutorial for the DGtal library. It is largely based on the <a href="https://github.com/DGtal-team/DGtal-Tutorials-DGMM2022/tree/main">DGMM2022 Tutorial</a></p>
+<p>It is composed of a two practicals, that can be done in any order :</p>
+<ul>
+<li>a short around homotopy thinning, more oriented around topology manipulations</li>
+<li>a longer one around estimators (normals, curvature) as well as differential calculus</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="setup"><a class="header" href="#setup">Setup</a></h1>
 <h2 id="requirements"><a class="header" href="#requirements">Requirements</a></h2>
 <ul>
@@ -186,24 +192,118 @@
 <li>openGL headers (for polyscope visualization)</li>
 </ul>
 <h2 id="building-the-code"><a class="header" href="#building-the-code">Building the code</a></h2>
-<p>First clone the repo at https://github.com/Lieunoir/DGtal-tutorial-jcgeo24</p>
-<p>We setup in Release mode otherwise some parts will be running way too slow</p>
+<p>First clone <a href="https://github.com/Lieunoir/DGtal-tutorial-jcgeo24">the repo</a></p>
+<p>Then, to prepare to build the code :</p>
 <pre><code class="language-bash">mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
+cd ..
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="practical-1--homotopic-thinning"><a class="header" href="#practical-1--homotopic-thinning">Practical 1 : Homotopic thinning</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="practical-2--estimators-and-differential-calculus-on-3d-digital-surfaces"><a class="header" href="#practical-2--estimators-and-differential-calculus-on-3d-digital-surfaces">Practical 2 : Estimators and differential calculus on 3d digital surfaces</a></h1>
+<p>To build then run the example :</p>
+<pre><code class="language-bash">cmake --build build --target examplePolyscope -- -j 8
+./build/examplePolyscope
+</code></pre>
+<p>(change <code>-j 8</code> to how many core you want to use on your machine)</p>
+<p>We setup in Release mode otherwise some parts will be running way too slow</p>
+<p>Each practical has its corresponding file to complete, as well as a cmake target (change the <code>--target</code> parameter accordingly)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="homotopic-thinning"><a class="header" href="#homotopic-thinning">Homotopic Thinning</a></h1>
 <blockquote>
-<p>[name=Jacques-Olivier Lachaud][time=Oct 2022][color=#907bf7]</p>
+<p>David Coeurjolly</p>
 </blockquote>
-<p>The objective of this practical is to compute a few geometric quantities on digital surfaces and compare them with ground truth values using <a href="https://dgtal.org">DGtal</a>.  It also highlights the asymptotic relations of a smooth Euclidean shape with its digitized counterpart.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting started</a></h1>
-<p>In the DGtal-DGMM <code>practical-3D-estimation</code> repository, have a look to the <code>3D-estimation-template.cpp</code> file. If you are in your build repository, it should compile as is and is executed simply in the command line with</p>
-<pre><code>./3D-estimation-template
+<p>The objective of this practical is to implement an homotopic thinning algorithm of a 3d binary object using <a href="https://dgtal.org">DGtal</a>.</p>
+<p>Solutions can be found in <code>solutions/homotopic-thinning.cpp</code>.</p>
+<div class="table-wrapper"><table><thead><tr><th>Input</th><th>Step 1.</th><th>..</th><th>Step k</th><th>..</th><th>Final</th></tr></thead><tbody>
+<tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_2d65e8663b21cee61dde8ce3a2fe5506.png" alt="" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_c34670acb8f35e31cd90e1483d808bbb.png" alt="" /></td><td>...</td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_b3192ebd78d2f9c7e037f042ae839cc6.png" alt="" /></td><td>...</td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_b9057fae128336b9c20146ea1691bdca.png" alt="" /></td></tr>
+</tbody></table>
+</div>
+<h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
+<p>In the DGtal-DGMM repository, have a look to the <code>homotopic-thinning.cpp</code> file. It should compile as is and if you provide an input Vol (some are available in the <code>data</code> folder) file in the command line</p>
+<pre><code>./homotopic-thinning -i fertility-128.vol
+</code></pre>
+<p>You should see a polyscope window with two surface meshes: the input digital object primal surface and the thinned object primal surface.</p>
+<details><summary>Primal surface?
+</summary>
+The primal surface of a digital object corresponds to an embedding of the [digital surface](https://dgtal-team.github.io/doc-nightly/moduleDigitalSurfaces.html) (boundary of the union of the voxels) in the [Khalimsky grid](https://dgtal-team.github.io/doc-nightly/moduleCellularTopology.html), to the Euclidean space. I.e. 2-cells (cells of dimension 2 of the Khalimsky complex) corresponding to the boundary between interior and exterior voxels are embedded as unit squares.
+</details>
+<h1 id="the-algorithm"><a class="header" href="#the-algorithm">The algorithm</a></h1>
+<h2 id="preliminaries"><a class="header" href="#preliminaries">Preliminaries</a></h2>
+<p>The main part of the documentation for this practical is the one related to <a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalTopology.html">digital topology and objects</a>.</p>
+<p>In terms of data structures, <a href="https://dgtal.org">DGtal</a> makes the distinction between:</p>
+<ul>
+<li><a href="https://dgtal-team.github.io/doc-nightly/moduleSpacePointVectorDomain.html">Domains</a>: digital domain. For instance, types <code>Z2i::Domain</code> and <code>Z3i::Domain</code> correspond to hyper rectangular domains defined by two points (lower and upper-bound) in dimensions 2 and 3.</li>
+<li><a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalSets.html">Digital sets</a>: containers for point sets in a given domain. For example, once constructed, points can be inserted, removed. E.g.</li>
+</ul>
+<details><summary>Digital Sets containers and Concepts
+</summary>
+Internally, many data structures can be used to implement a digital set container (`std::set, std::unorderd_set, std::vector, user-specified data structure...`). Each **model** of digital sets must satisfy the concept of Digtal Set (must have the same API, same preconditions...). In DGtal, we use boost concepts for that. Have a look to the [CDigitalSet](https://dgtal-team.github.io/doc-nightly/structDGtal_1_1concepts_1_1CDigitalSet.html) concept file.
+</details>
+<pre><code class="language-c++">Z3i::Point a(0,0,0);
+Z3i::Point b(64,64,64);
+Z3i::Domain domain( a,b );
+Z3i::DigtalSet aSet( domain );
+Z3i::Point p(42,42,42);
+aSet.insert( p );
+aSet.erase( p );
+...
+</code></pre>
+<ul>
+<li><a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalTopology.html">Digital Objects</a>: a digital set equipped with a topological structure (Adjacency relation). In 2d, classical <a href="https://dgtal-team.github.io/doc-nightly/classDGtal_1_1DigitalTopology.html">DigitalTopology</a> models are <code>Z2i::DT4_8</code> and <code>Z2i::DT_8_4</code>. In 3d, we have the shortcuts <code>Z3i::DT6_26</code>, <code>Z3i::DT26_6</code>, <code>Z3i::DT6_18</code> and <code>Z3i::DT18_6</code> that define proper Jordan pairs of adjacency relationships. Note that if you have your own definitions for the adjacency at the object and its background, you can instantiate a Digital Object on it. On <a href="https://dgtal-team.github.io/doc-nightly/classDGtal_1_1Object.html">Object</a> instances, you can compute several topological quantities such as the border of an object or <a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalTopology.html#dgtal_topology_sec3_5">the simplicity of a point</a>.</li>
+</ul>
+<p>For the <code>Z3i::DT6_26</code> topology, the associated DigitalObject can be simply instantiating using the <code>Z3i::Object6_26</code> type.</p>
+<p>E.g.:</p>
+<pre><code class="language-c++">...  //continuing with the previous code snippet
+Z3i::Object6_26 anObject( aSet );
+bool is_p_simple = anObject.isSimple( p );
+//should return false here.
+...
+</code></pre>
+<details><summary> Simple points?
+</summary>
+Roughly speaking, for a given digital object, a point is simple if removing it does not change some topological invariants of the object and its complement (e.g. number of holes, number of connected components, number of tunnels...). See [^1] for a more formal definition.
+</details>
+<h2 id="homotopic-thinning-1"><a class="header" href="#homotopic-thinning-1">Homotopic Thinning</a></h2>
+<p>The object is to implement a layered homotopic thinning algorithm. For a 3d digital object, the algorithm can be sketched as follows:</p>
+<ul>
+<li>We detect and store all points that are simple</li>
+<li>Then, for all simple poins, we remove them one by one (when removing a point, we must check that the point is still simple).</li>
+<li>We repeat until no more simple points exist.</li>
+</ul>
+<p>The fixed point of the algorithm is thus a 1d curvilinear skeleton with is homotopic to the input one.</p>
+<p><img src="https://codimd.math.cnrs.fr/uploads/upload_b9057fae128336b9c20146ea1691bdca.png" alt="" /></p>
+<h1 id="lets-go"><a class="header" href="#lets-go">Let's go</a></h1>
+<ol>
+<li>Have a look to the code skeleton <code>practical-homotopic-thinning/homotopic-thinning.cpp</code>. You will have everything to load a Vol file (in the <a href="https://github.com/DGtal-team/DGtal-Tutorials-DGMM2022/tree/main/data">data</a> folder or <a href="https://github.com/dcoeurjo/VolGallery">VolGallery</a>), construct the digital object and visualize the boundary of an binary image using <a href="https://polyscope.run">polyscope</a>.</li>
+<li>Implement the main method <code>oneStep()</code> that performs one step of the above-described algorithm.</li>
+<li>Change the adjacency pairs of the digital object and compare the results.</li>
+</ol>
+<p><strong>Tips</strong>:</p>
+<ul>
+<li>You would have to maintain two structures: the digital object that is peeled, and the binary image ($\mathbb{Z}^3\rightarrow {0,1}$) that is used for the visualization.</li>
+<li>In polyscope, the <code>Options</code> button on a mesh structure opens up a panel in which you can play with the transparency of the surface.</li>
+<li>For efficiency purposes, the simplicity test is performed using a precomputed lookup table, available in 2d or 3d. In higher dimensions, we fall back on the explicit computation of connected components as described in <sup class="footnote-reference"><a href="#1">1</a></sup>.</li>
+</ul>
+<h1 id="going-further"><a class="header" href="#going-further">Going further</a></h1>
+<p>The naive algorithms can be enhanced in many ways:</p>
+<ul>
+<li>You can add anchor points: for a given predicate returning true if a point is an anchor point, update the code to remove simple points that do not satisfy the predicate (and find an interesting predicate;))</li>
+<li>When processing the simple points, a priority queue can be considered based on the distance transformation of the object. Use the <a href="https://dgtal-team.github.io/doc-nightly/moduleVolumetric.html">separable distance transformation</a> algorithm to order the points.</li>
+</ul>
+<h1 id="references"><a class="header" href="#references">References</a></h1>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>Gilles Bertrand and Grégoire Malandain. A new characterization of three-dimensional simple points. Pattern Recognition Letters, 15(2):169–175, February 1994.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="estimators-and-differential-calculus-on-3d-digital-surfaces"><a class="header" href="#estimators-and-differential-calculus-on-3d-digital-surfaces">Estimators and differential calculus on 3d digital surfaces</a></h1>
+<blockquote>
+<p>by Colin Weill--Duflos, largely taken from a base from Jacques-Olivier Lachaud</p>
+</blockquote>
+<p>The objective of this practical is to compute a few geometric quantities on digital surfaces and compare them with ground truth values using <a href="https://dgtal.org">DGtal</a>. It also shows how to build some differential operators on a digital surface, and how corrected normals can improve them.</p>
+<p>The two sections of this practicals can be done independantly (and have two different solution files), although nicer stuff can be done during the operators part if you have different normal estimators.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started-1"><a class="header" href="#getting-started-1">Getting started</a></h1>
+<p>Have a look to the <code>surface-estimators.cpp</code> file. If you are in your build repository, it should compile as is and is executed simply in the command line with</p>
+<pre><code>./surface-estimators
 </code></pre>
 <p>You may choose your implicit shape and digitization step. The program computes the digital surface in-between interior/exterior points, then convert it to a polygonal quad mesh called <em>primal surface</em>. It is its natural digital embedding as the boundary of a union of voxels.</p>
-<div class="table-wrapper"><table><thead><tr><th>sphere9 $h=0.5$</th><th>torus $h=0.5$</th><th>torus $h=0.25$</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>sphere9 \(h=0.5\)</th><th>torus \(h=0.5\)</th><th>torus \(h=0.25\)</th></tr></thead><tbody>
 <tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_2d96ecd7b599f5805fc1cdf307d838d1.jpg" alt="sphere9" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_cad5a603a5c15e2620c65a54632d44da.jpg" alt="torus" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_54927d37c1cef31bf7b536b6fc2f1880.jpg" alt="torus_fine" /></td></tr>
 </tbody></table>
 </div><details><summary>Primal surface?
@@ -212,11 +312,12 @@ The primal surface of a digital object corresponds to an embedding of the [digit
 </details>
 <p><strong>Exercise</strong> : add new shapes
 You may start your practical by adding a few implicitly defined shapes to the program. "goursat", "leopold", "goursat-hole" are popular examples. Expect one line of code per shape.</p>
-<div class="table-wrapper"><table><thead><tr><th>goursat $h=0.25$</th><th>leopold $h=0.25$</th><th>goursat hole $h=0.25$</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>goursat \(h=0.25\)</th><th>leopold \(h=0.25\)</th><th>goursat hole \(h=0.25\)</th></tr></thead><tbody>
 <tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_dc375cc62be79bf7249cc6f6bcc5543c.jpg" alt="goursat" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_1d02d86177f794f9c5c8714a28a32cd4.jpg" alt="leopold" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_0d902e6d23edc2b30de341f86a52c7a3.jpg" alt="goursat-hole" /></td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="3d-geometric-estimations"><a class="header" href="#3d-geometric-estimations">3D geometric estimations</a></h1>
 <p>This section shows how to estimate correctly the area of a digital object. We start by estimating a normal vector field on the surface, and then the global area is estimated through local computations.</p>
+<p>Solutions can be found in <code>solutions/surface-estimators.cpp</code>.</p>
 <p>The main part of the documentation for this practical is the one related to <a href="https://dgtal-team.github.io/doc-nightly/moduleShortcuts.html">shorcuts</a>. It provides you a lot of ready-to-use functions to load/build volume and surfaces, computes some geometric quantities, and export them.</p>
 <details><summary>
 Philosophy of <a href="https://dgtal-team.github.io/doc-nightly/moduleShortcuts.html">shortcuts</a> module
@@ -256,14 +357,14 @@ You  can for instance add the computation of the trivial (T),  the convolved tri
     -&gt;setMapRange( { 0.0, M_PI / 20.0 } ) // 10° is bad !
     -&gt;setColorMap( "coolwarm" );
 </code></pre>
-<div class="table-wrapper"><table><thead><tr><th>(T) angle error of sphere $h=1$</th><th>(II) angle error of sphere $h=1$</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>(T) angle error of sphere \(h=1\)</th><th>(II) angle error of sphere \(h=1\)</th></tr></thead><tbody>
 <tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_ac176359a314091d3d776495dfef3a65.jpg" alt="error-t-1" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_41c6742944c577a9754c25ef6186291e.jpg" alt="error-ii-1" /></td></tr>
 </tbody></table>
 </div>
 <p><strong>Exercise (optional)</strong> : compute \(l_2\) and \(l_\infty\) errors in normal estimation</p>
 <p>You can also compute the \(l_\infty\)-error of normal vector estimation, by computing the maximum of angle errors. For the \(l_2\)-error, the easiest way is to compute the squared root of the variance of angle errors. Use <code>ShorcutsGeometry::getStatistic</code> to get a statistic object from  your vector of angle errors.</p>
 <p>For the <code>sphere9</code> object, you would get something like:</p>
-<div class="table-wrapper"><table><thead><tr><th>sphere9</th><th>\(l_\infty\)-error (T)</th><th>\(l_\infty\)-error (CT)</th><th>$l_\infty$-error (II)</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>sphere9</th><th>\(l_\infty\)-error (T)</th><th>\(l_\infty\)-error (CT)</th><th>\(l_\infty\)-error (II)</th></tr></thead><tbody>
 <tr><td>\(h=1\)</td><td>1.516</td><td>0.141</td><td>0.139</td></tr>
 <tr><td>\(h=0.5\)</td><td>1.543</td><td>0.190</td><td>0.077</td></tr>
 <tr><td>\(h=0.25\)</td><td>1.557</td><td>0.183</td><td>0.041</td></tr>
@@ -273,23 +374,17 @@ You  can for instance add the computation of the trivial (T),  the convolved tri
 <h2 id="two-methods-for-estimating-the-area"><a class="header" href="#two-methods-for-estimating-the-area">Two methods for estimating the area</a></h2>
 <p>We propose two methods for computing the area, both of them works with local summations involving normal vectors. Let \(\mathbf{X}\) be the smooth implicit shape, \(\mathbf{X}_h\) its Gauss digitization at step \(h\). Let us denote \((\mathbf{t}_i)\) the trivial normal vectors for each surfel \(i\), and \((\mathbf{u}_i)\) any one of your estimated normal vector field. We will also use \((\mathbf{n}_i)\) as the exact normal vector field (it is the true normal of the implicit surface at the nearest point to the surfel centroid).</p>
 <ol>
-<li>
-<p>The first method, sometimes called Euler integration, takes the  scalar product of the trivial normal with the estimated normal (formula related to classical integration change of variables):
-\[
-\widehat{\mathrm{Area}_1}(\mathbf{X}<em>h,h) := h^2 \sum</em>{\text{surfels}<del>i</del>\text{of}~X_h} \mathbf{t}_i  \cdot \mathbf{u}_i.
-\]</p>
-</li>
-<li>
-<p>The second method, proposed in <sup class="footnote-reference"><a href="#6">1</a></sup>, takes the inverse  of the $l_1$-norm of each estimated normal vector (formula related more to a statiscal analysis of digital planes):</p>
-</li>
+<li>The first method, sometimes called Euler integration, takes the  scalar product of the trivial normal with the estimated normal (formula related to classical integration change of variables): \[
+\widehat{\mathrm{Area}_1}(\mathbf{X}_h,h) := h^2 \sum_{\text{surfels}~i~\text{of}~X_h} \mathbf{t}_i  \cdot \mathbf{u}_i.
+\]</li>
+<li>The second method, proposed in <sup class="footnote-reference"><a href="#6">1</a></sup>, takes the inverse  of the $l_1$-norm of each estimated normal vector (formula related more to a statiscal analysis of digital planes): \[ \widehat{\mathrm{Area}_2}(\mathbf{X}_h,h) := h^2 \sum_{\text{surfels}~i~\text{of}~X_h} \frac{1}{|\mathbf{u}_i|_1}. \]</li>
 </ol>
-<p>\[ \widehat{\mathrm{Area}_2}(\mathbf{X}<em>h,h) := h^2 \sum</em>{\text{surfels}<del>i</del>\text{of}~X_h} \frac{1}{|\mathbf{u}_i|_1}. \]</p>
 <p><strong>Exercise</strong>: Compute the estimated area using both methods
 Use the formulas above and your normal vector fields to perform the area estimations. You may display the result in your GUI with something like:</p>
 <pre><code class="language-cpp">ImGui::Text( "Area1=%f Area2=%f", Area1, Area2 );
 </code></pre>
 <p>For a sphere of radius \(r\), the true area is \(4 \pi r^2\), hence for <code>sphere9</code> , expect \(1017.87601976309300925456\).</p>
-<h2 id="checking-the-multigrid-convergence"><a class="header" href="#checking-the-multigrid-convergence">Checking the multigrid convergence</a></h2>
+<h2 id="optional-checking-the-multigrid-convergence"><a class="header" href="#optional-checking-the-multigrid-convergence">(Optional) Checking the multigrid convergence</a></h2>
 <p>A natural question is if these area estimates tends to the area of the Euclidean shape as the digitization gets finer and finer, aka are your area estimators <strong>multigrid convergent</strong> <sup class="footnote-reference"><a href="#3">2</a></sup> ?</p>
 <p>For Euler integration method (method 1), Theorem 4 <sup class="footnote-reference"><a href="#5">3</a></sup> asserts that \(\widehat{\mathrm{Area}_1}\) estimator is multigrid convergent as long as the estimated normal vector field \(\mathbf{u}\) is itself convergent. The worst-case speed is then of the same order.</p>
 <p>Convergence of (II) normal vector field is proven in <sup class="footnote-reference"><a href="#1">4</a></sup> and its speed of convergence is explicited in <sup class="footnote-reference"><a href="#4">5</a></sup>. Convergence of (VCM) normal vector field is proven in <sup class="footnote-reference"><a href="#2">6</a></sup>.</p>
@@ -298,7 +393,7 @@ Use the formulas above and your normal vector fields to perform the area estimat
 <p><strong>Exercise</strong>: compute areas for a sequence of shapes with finer and finer digitization.
 You may either use your GUI to compute by hand each error, or creates a new button that launches these computations, without creating a shape in the polyscope interface (copy/paste is your friend).</p>
 <p>For a sphere object, you have easily the true area $A$, so the relative error is computed as \(\left|\frac{\widehat{\mathrm{Area}_k}(\mathbf{X}_h,h)-A}{A}\right|\).</p>
-<p>For other shapes, you can have an idea of the convergence by using the area estimator with  the true normal vector field $\mathbf{n}$. In some sense, you cannot expect a better result at the given  resolution.</p>
+<p>For other shapes, you can have an idea of the convergence by using the area estimator with  the true normal vector field \(\mathbf{n}\). In some sense, you cannot expect a better result at the given  resolution.</p>
 <p>The  table below displays the relative error for method 1 (Euler Integration):</p>
 <div class="table-wrapper"><table><thead><tr><th><code>sphere9</code></th><th>\( \mathbf{u}= \)(T)</th><th>\( \mathbf{u}= \)(CT)</th><th>\( \mathbf{u}= \)(II)</th></tr></thead><tbody>
 <tr><td>\(h=1\)</td><td>\(49.134\)%</td><td>\(3.200\)%</td><td>\(0.369\)%</td></tr>
@@ -311,7 +406,7 @@ You may either use your GUI to compute by hand each error, or creates a new butt
 <li>Is method 1 before than method 2 ?</li>
 <li>What is  the speed of convergence (hint: display graph with gnuplot in logscale) ?</li>
 </ul>
-<h2 id="references"><a class="header" href="#references">References</a></h2>
+<h2 id="references-1"><a class="header" href="#references-1">References</a></h2>
 <div class="footnote-definition" id="1"><sup class="footnote-definition-label">4</sup>
 <p>D. Coeurjolly, J.-O. Lachaud, and J. Levallois. Multigrid convergent principal curvature estimators in digital geometry. Computer Vision and Image Understanding, 129 :27 – 41, 2014.</p>
 </div>
@@ -329,6 +424,112 @@ You may either use your GUI to compute by hand each error, or creates a new butt
 </div>
 <div class="footnote-definition" id="6"><sup class="footnote-definition-label">1</sup>
 <p>J.-O. Lachaud and A. Vialard. Geometric measures on arbitrary dimensional digital surfaces. In G. Sanniti di Baja, S. Svensson, and I. Nyström, editors, Proc. Int. Conf. Discrete Geometry for Computer Imagery (DGCI’2003), Napoli, Italy, volume 2886 of LNCS, pages 434–443. Springer, 2003.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="differential-calculus-operators"><a class="header" href="#differential-calculus-operators">Differential calculus operators</a></h1>
+<p>This section shows how to build a Laplace-Beltrami operator to solve some Dirichlet problems, and how corrected normals can be used to improve its construction.</p>
+<p>Solutions can be found in <code>solutions/surface-operators.cpp</code>.</p>
+<h2 id="linear-operators"><a class="header" href="#linear-operators">Linear Operators</a></h2>
+<p>Our goal is to solve the following Dirichlet Problem :</p>
+<p>The way this is usually solved is by building a mass matrix \(M\) (also corresponding to the inner product between 0 forms) and a stiffness matrix \(L\) (corresponding to the integrated Laplace-Beltrami operator). \( \Delta f = g \) can be expressed as \( L \mathbf{f} = M \mathbf{g} \) where \( \mathbf{f} \) and \( \mathbf{g} \) are vectors holding the values of their respective functions at vertices.</p>
+<p>There are different ways of obtaining these matrices, including</p>
+<ul>
+<li><a href="https://lieunoir.github.io/DGtal/moduleNormalCorrectedFEM.html">Finite Element Method</a> (works on triangular and quadrangular surfaces, require normals at faces)</li>
+<li><a href="https://lieunoir.github.io/DGtal/classDGtal_1_1InterpolatedCorrectedCalculus.html">Corrected Calculus</a>(works on digital surfaces, require normal at vertices)</li>
+<li><a href="https://lieunoir.github.io/DGtal/modulePolygonalCalculus.html">PolyDEC</a>(works on any polygonal surfaces, can be provided a custom embedder)</li>
+</ul>
+<p>We'll focus here on the finite element method. It can be instanciated with the following line :</p>
+<pre><code class="language-cpp">NormalCorrectedFEM&lt;EigenLinearAlgebraBackend, SH3::RealVector, SH3::RealPoint&gt; fem(surfmesh);
+</code></pre>
+<h4 id="estimating-the-area-again"><a class="header" href="#estimating-the-area-again">Estimating the area (again)</a></h4>
+<p>The area can be expresssed as the integral of the function ((1\) over the surface, which is itself the product of the function ((1\) by the function \(1\).</p>
+<p>Thus the surface can be estimated by \( \mathbf{1} M \mathbf{1} \).</p>
+<p><strong>Exercise</strong>: create an instance of FEM and use it to get a massmatrix. You must attach face normals beforehand to the surfacemesh. Use this matrix to estimate the surface Area. You can also change the normals attached to the surface, rebuild the matrix, and display the surface Area using these matrices.</p>
+<h5 id="tips"><a class="header" href="#tips">Tips</a></h5>
+<ul>
+<li>Results should correspond to the 1st method of the previous part (dot product corrected areas)</li>
+<li>In order to obtain a vector of size \( n_v \), you can use the following line :
+<pre><code class="language-cpp">  EigenLinearAlgebraBackend::DenseVector myVector(surfmesh.nbVertices);
+</code></pre>
+Note that you <strong>have</strong> to fill it with values afterward, otherwise it will be nonsensical.
+These vectors and the matrices are from the <code>Eigen</code> library, so you can do matrix/vector multiplication, you can transpose them using <code>vec.transpose()</code> etc...</li>
+</ul>
+<h2 id="solving-the-heat-equation"><a class="header" href="#solving-the-heat-equation"><a name="heat"></a> Solving the heat equation</a></h2>
+<p>Recall the heat equation :</p>
+<p>\[
+\frac{\partial u}{\partial t} = \Delta u
+\]</p>
+<p>We discretize \(u\) over time as \(u<em>0\), ... , \(u_i\), \(u</em>{i+1}\), with a certain timestep \(dt\).</p>
+<p>We can use a forward Euler method to solve our equation numerically :
+\[
+\begin{split}
+\frac{u_{i+1} - u_i}{dt} &amp; = \Delta u_{i+1} \\
+u_{i+1} - u_i &amp; = dt\Delta u_{i+1} \\
+u_{i+1} - dt\Delta u_{i+1} &amp; = u_i
+\end{split}
+\]
+By integrating over the surface on both side (meaning we multiply by \(M\) we get :</p>
+<p>\[
+(M - dtL) u_{i+1} = M u_i
+\]</p>
+<p>We can thus simulate some diffusion by inverting \((M - dt L)\).</p>
+<h5 id="choosing-dt"><a class="header" href="#choosing-dt">Choosing \(dt\)</a></h5>
+<p>A good value for \(dt\) is \(h*h\) where \(h\) is a characteristic length of the surface (such as the gridstep, or the lenth of an arbitrary edge).
+You can also add a slider to add a multiplicative constant to this formula and see the results.</p>
+<h5 id="inverting-dt"><a class="header" href="#inverting-dt">Inverting \(dt\)</a></h5>
+<p>Since we use <code>Eigen</code>, we also have access to some linear algebrea solvers. In particular, to solve for \(x\) in \(Ax=b\), you can use the following lines :</p>
+<pre><code class="language-cp">typedef EigenLinearAlgebraBackend::SolverSimplicialLDLT Solver;
+typedef EigenLinearAlgebraBackend::DenseVector DenseVector;
+Solver solver;
+solver.compute(A);
+DenseVector x = solver.solve(b);
+</code></pre>
+<p><strong>Exercise</strong>: Select an arbitrary point that will serve as a heat source. Build a vector representing the initial heat distribution, 0 everywhere and 1 at the heat source. Simulate some heat diffusion and show the result.</p>
+<h5 id="tips-1"><a class="header" href="#tips-1">Tips</a></h5>
+<ul>
+<li>
+<p>Polyscope can be used in order to display some data on our surface. The following line shows how :</p>
+<pre><code class="language-cpp">psMesh-&gt;addVertexScalarQuantity( "Some data", myVector );
+</code></pre>
+</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>Heat source</th><th>Diffused heat</th></tr></thead><tbody>
+<tr><td><img src="estimators//images/diffuse-source.webp" alt="Heat Source" /></td><td><img src="estimators//images/diffused.webp" alt="Diffused Heat" /></td></tr>
+</tbody></table>
+</div>
+<h2 id="smooth-data-interpolation"><a class="header" href="#smooth-data-interpolation"><a name="dirichlet"></a> Smooth data interpolation</a></h2>
+<p>We will choose a few random points as the "border" of our surface. By adding constraint at these points, and solving the problem shown at the beginning, we are effectively filling the gaps with a smooth function.</p>
+<p>There is a <a href="https://lieunoir.github.io/DGtal/classDGtal_1_1DirichletConditions.html">helper class</a> to solve Dirichlet problems. You can see how to use it <a href="https://lieunoir.github.io/DGtal/moduleNormalCorrectedFEM.html#secLap">here</a> (except that this example uses the border of the surface instead of randomly selected points).</p>
+<p><strong>Exercise</strong>: select a few random points that will act as constraints. Interpolate with a harmonic function. Show the resulting function. Again, you can change the attached normals to the mesh and rebuild to see if it makes significant changes.</p>
+<div class="table-wrapper"><table><thead><tr><th>Initial values</th><th>Interpolating function</th></tr></thead><tbody>
+<tr><td><img src="estimators//images/interpoalte-source.webp" alt="Heat Source" /></td><td><img src="estimators//images/interpoalted.webp" alt="Diffused Heat" /></td></tr>
+</tbody></table>
+</div>
+<h2 id="heat-geodesics"><a class="header" href="#heat-geodesics">Heat geodesics</a></h2>
+<p>We now have almost everything we need for the heat geodesic method. This methods (described in <sup class="footnote-reference"><a href="#1">1</a></sup>) gives use the ability to compute an estimate of the distance to a vertex for all the other vertices of a mesh.</p>
+<p>The method can be described as follow :</p>
+<ul>
+<li>Diffuse a heat source at the source point with a small time step (see <a href="estimators/operators.html#heat">previous section</a>)</li>
+<li>Compute the gradient of the result</li>
+<li>Normalize this gradient</li>
+<li>Compute the divergence of the normalized gradient</li>
+<li>Integrate twice the result with a constraint of 0 at the source (see <a href="estimators/operators.html#dirichlet">other previous section</a></li>
+</ul>
+<h4 id="gradient-and-divergence"><a class="header" href="#gradient-and-divergence">Gradient and Divergence</a></h4>
+<p>The only thing missing is the gradient and divergence computation. Sadly, as of right now, the FEM doesn't give us these operators. We can use instead the calculus provided <a href="https://lieunoir.github.io/DGtal/classDGtal_1_1InterpolatedCorrectedCalculus.html">here</a>.</p>
+<p>We can use it in the same way to get the Lapace-Beltrami operators. While it doesn't provide directly the gradient and divergence, we can use the following identities :
+\[ grad = D_0 \# \]
+\[ div = M_0^{-1} D_0^{-t} M_1 \flat \]
+(The \(M_0^{-1}\) is cancelled later so don't actually compute it!)</p>
+<p>Gradients are attached to faces, so the vector representing the faces is a vector of size \( 3 \times n_f \). Each block of 3 represent a value.</p>
+<p>This method requires normals atached to vertices, not to faces as we currently have. There is a method available to SurfaceMeshes in order to compute vertex normals from face normals, use it!</p>
+<p><strong>Exercise</strong>: Choose an arbitrary point randomly, and compute geodesic distance to it using the geodesic method. Display the resulting values in polyscope.</p>
+<div class="table-wrapper"><table><thead><tr><th>Source</th><th>Geodesics</th></tr></thead><tbody>
+<tr><td><img src="estimators//images/geodesics-source.webp" alt="Heat Source" /></td><td><img src="estimators//images/geodesics.webp" alt="Diffused Heat" /></td></tr>
+</tbody></table>
+</div>
+<h1 id="references-2"><a class="header" href="#references-2">References</a></h1>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>Keenan Crane, Clarisse Weischedel, and Max Wardetzky. 2013. Geodesics in heat: A new approach to computing distance based on heat flow. ACM Trans. Graph. 32, 5, Article 152 (September 2013), 11 pages. https://doi.org/10.1145/2516971.2516977</p>
 </div>
 
                     </main>

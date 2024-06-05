@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="thinning.html" class="active"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="thinning.html" class="active"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li><li class="chapter-item expanded "><a href="estimators/operators.html"><strong aria-hidden="true">3.3.</strong> Differential calculus operators</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -175,7 +175,92 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="practical-1--homotopic-thinning"><a class="header" href="#practical-1--homotopic-thinning">Practical 1 : Homotopic thinning</a></h1>
+                        <h1 id="homotopic-thinning"><a class="header" href="#homotopic-thinning">Homotopic Thinning</a></h1>
+<blockquote>
+<p>David Coeurjolly</p>
+</blockquote>
+<p>The objective of this practical is to implement an homotopic thinning algorithm of a 3d binary object using <a href="https://dgtal.org">DGtal</a>.</p>
+<p>Solutions can be found in <code>solutions/homotopic-thinning.cpp</code>.</p>
+<div class="table-wrapper"><table><thead><tr><th>Input</th><th>Step 1.</th><th>..</th><th>Step k</th><th>..</th><th>Final</th></tr></thead><tbody>
+<tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_2d65e8663b21cee61dde8ce3a2fe5506.png" alt="" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_c34670acb8f35e31cd90e1483d808bbb.png" alt="" /></td><td>...</td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_b3192ebd78d2f9c7e037f042ae839cc6.png" alt="" /></td><td>...</td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_b9057fae128336b9c20146ea1691bdca.png" alt="" /></td></tr>
+</tbody></table>
+</div>
+<h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
+<p>In the DGtal-DGMM repository, have a look to the <code>homotopic-thinning.cpp</code> file. It should compile as is and if you provide an input Vol (some are available in the <code>data</code> folder) file in the command line</p>
+<pre><code>./homotopic-thinning -i fertility-128.vol
+</code></pre>
+<p>You should see a polyscope window with two surface meshes: the input digital object primal surface and the thinned object primal surface.</p>
+<details><summary>Primal surface?
+</summary>
+The primal surface of a digital object corresponds to an embedding of the [digital surface](https://dgtal-team.github.io/doc-nightly/moduleDigitalSurfaces.html) (boundary of the union of the voxels) in the [Khalimsky grid](https://dgtal-team.github.io/doc-nightly/moduleCellularTopology.html), to the Euclidean space. I.e. 2-cells (cells of dimension 2 of the Khalimsky complex) corresponding to the boundary between interior and exterior voxels are embedded as unit squares.
+</details>
+<h1 id="the-algorithm"><a class="header" href="#the-algorithm">The algorithm</a></h1>
+<h2 id="preliminaries"><a class="header" href="#preliminaries">Preliminaries</a></h2>
+<p>The main part of the documentation for this practical is the one related to <a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalTopology.html">digital topology and objects</a>.</p>
+<p>In terms of data structures, <a href="https://dgtal.org">DGtal</a> makes the distinction between:</p>
+<ul>
+<li><a href="https://dgtal-team.github.io/doc-nightly/moduleSpacePointVectorDomain.html">Domains</a>: digital domain. For instance, types <code>Z2i::Domain</code> and <code>Z3i::Domain</code> correspond to hyper rectangular domains defined by two points (lower and upper-bound) in dimensions 2 and 3.</li>
+<li><a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalSets.html">Digital sets</a>: containers for point sets in a given domain. For example, once constructed, points can be inserted, removed. E.g.</li>
+</ul>
+<details><summary>Digital Sets containers and Concepts
+</summary>
+Internally, many data structures can be used to implement a digital set container (`std::set, std::unorderd_set, std::vector, user-specified data structure...`). Each **model** of digital sets must satisfy the concept of Digtal Set (must have the same API, same preconditions...). In DGtal, we use boost concepts for that. Have a look to the [CDigitalSet](https://dgtal-team.github.io/doc-nightly/structDGtal_1_1concepts_1_1CDigitalSet.html) concept file.
+</details>
+<pre><code class="language-c++">Z3i::Point a(0,0,0);
+Z3i::Point b(64,64,64);
+Z3i::Domain domain( a,b );
+Z3i::DigtalSet aSet( domain );
+Z3i::Point p(42,42,42);
+aSet.insert( p );
+aSet.erase( p );
+...
+</code></pre>
+<ul>
+<li><a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalTopology.html">Digital Objects</a>: a digital set equipped with a topological structure (Adjacency relation). In 2d, classical <a href="https://dgtal-team.github.io/doc-nightly/classDGtal_1_1DigitalTopology.html">DigitalTopology</a> models are <code>Z2i::DT4_8</code> and <code>Z2i::DT_8_4</code>. In 3d, we have the shortcuts <code>Z3i::DT6_26</code>, <code>Z3i::DT26_6</code>, <code>Z3i::DT6_18</code> and <code>Z3i::DT18_6</code> that define proper Jordan pairs of adjacency relationships. Note that if you have your own definitions for the adjacency at the object and its background, you can instantiate a Digital Object on it. On <a href="https://dgtal-team.github.io/doc-nightly/classDGtal_1_1Object.html">Object</a> instances, you can compute several topological quantities such as the border of an object or <a href="https://dgtal-team.github.io/doc-nightly/moduleDigitalTopology.html#dgtal_topology_sec3_5">the simplicity of a point</a>.</li>
+</ul>
+<p>For the <code>Z3i::DT6_26</code> topology, the associated DigitalObject can be simply instantiating using the <code>Z3i::Object6_26</code> type.</p>
+<p>E.g.:</p>
+<pre><code class="language-c++">...  //continuing with the previous code snippet
+Z3i::Object6_26 anObject( aSet );
+bool is_p_simple = anObject.isSimple( p );
+//should return false here.
+...
+</code></pre>
+<details><summary> Simple points?
+</summary>
+Roughly speaking, for a given digital object, a point is simple if removing it does not change some topological invariants of the object and its complement (e.g. number of holes, number of connected components, number of tunnels...). See [^1] for a more formal definition.
+</details>
+<h2 id="homotopic-thinning-1"><a class="header" href="#homotopic-thinning-1">Homotopic Thinning</a></h2>
+<p>The object is to implement a layered homotopic thinning algorithm. For a 3d digital object, the algorithm can be sketched as follows:</p>
+<ul>
+<li>We detect and store all points that are simple</li>
+<li>Then, for all simple poins, we remove them one by one (when removing a point, we must check that the point is still simple).</li>
+<li>We repeat until no more simple points exist.</li>
+</ul>
+<p>The fixed point of the algorithm is thus a 1d curvilinear skeleton with is homotopic to the input one.</p>
+<p><img src="https://codimd.math.cnrs.fr/uploads/upload_b9057fae128336b9c20146ea1691bdca.png" alt="" /></p>
+<h1 id="lets-go"><a class="header" href="#lets-go">Let's go</a></h1>
+<ol>
+<li>Have a look to the code skeleton <code>practical-homotopic-thinning/homotopic-thinning.cpp</code>. You will have everything to load a Vol file (in the <a href="https://github.com/DGtal-team/DGtal-Tutorials-DGMM2022/tree/main/data">data</a> folder or <a href="https://github.com/dcoeurjo/VolGallery">VolGallery</a>), construct the digital object and visualize the boundary of an binary image using <a href="https://polyscope.run">polyscope</a>.</li>
+<li>Implement the main method <code>oneStep()</code> that performs one step of the above-described algorithm.</li>
+<li>Change the adjacency pairs of the digital object and compare the results.</li>
+</ol>
+<p><strong>Tips</strong>:</p>
+<ul>
+<li>You would have to maintain two structures: the digital object that is peeled, and the binary image ($\mathbb{Z}^3\rightarrow {0,1}$) that is used for the visualization.</li>
+<li>In polyscope, the <code>Options</code> button on a mesh structure opens up a panel in which you can play with the transparency of the surface.</li>
+<li>For efficiency purposes, the simplicity test is performed using a precomputed lookup table, available in 2d or 3d. In higher dimensions, we fall back on the explicit computation of connected components as described in <sup class="footnote-reference"><a href="#1">1</a></sup>.</li>
+</ul>
+<h1 id="going-further"><a class="header" href="#going-further">Going further</a></h1>
+<p>The naive algorithms can be enhanced in many ways:</p>
+<ul>
+<li>You can add anchor points: for a given predicate returning true if a point is an anchor point, update the code to remove simple points that do not satisfy the predicate (and find an interesting predicate;))</li>
+<li>When processing the simple points, a priority queue can be considered based on the distance transformation of the object. Use the <a href="https://dgtal-team.github.io/doc-nightly/moduleVolumetric.html">separable distance transformation</a> algorithm to order the points.</li>
+</ul>
+<h1 id="references"><a class="header" href="#references">References</a></h1>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>Gilles Bertrand and Grégoire Malandain. A new characterization of three-dimensional simple points. Pattern Recognition Letters, 15(2):169–175, February 1994.</p>
+</div>
 
                     </main>
 

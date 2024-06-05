@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="../thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="../estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="../estimators/estimations.html" class="active"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="../thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="../estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="../estimators/estimations.html" class="active"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li><li class="chapter-item expanded "><a href="../estimators/operators.html"><strong aria-hidden="true">3.3.</strong> Differential calculus operators</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -177,6 +177,7 @@
                     <main>
                         <h1 id="3d-geometric-estimations"><a class="header" href="#3d-geometric-estimations">3D geometric estimations</a></h1>
 <p>This section shows how to estimate correctly the area of a digital object. We start by estimating a normal vector field on the surface, and then the global area is estimated through local computations.</p>
+<p>Solutions can be found in <code>solutions/surface-estimators.cpp</code>.</p>
 <p>The main part of the documentation for this practical is the one related to <a href="https://dgtal-team.github.io/doc-nightly/moduleShortcuts.html">shorcuts</a>. It provides you a lot of ready-to-use functions to load/build volume and surfaces, computes some geometric quantities, and export them.</p>
 <details><summary>
 Philosophy of <a href="https://dgtal-team.github.io/doc-nightly/moduleShortcuts.html">shortcuts</a> module
@@ -216,14 +217,14 @@ You  can for instance add the computation of the trivial (T),  the convolved tri
     -&gt;setMapRange( { 0.0, M_PI / 20.0 } ) // 10° is bad !
     -&gt;setColorMap( "coolwarm" );
 </code></pre>
-<div class="table-wrapper"><table><thead><tr><th>(T) angle error of sphere $h=1$</th><th>(II) angle error of sphere $h=1$</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>(T) angle error of sphere \(h=1\)</th><th>(II) angle error of sphere \(h=1\)</th></tr></thead><tbody>
 <tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_ac176359a314091d3d776495dfef3a65.jpg" alt="error-t-1" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_41c6742944c577a9754c25ef6186291e.jpg" alt="error-ii-1" /></td></tr>
 </tbody></table>
 </div>
 <p><strong>Exercise (optional)</strong> : compute \(l_2\) and \(l_\infty\) errors in normal estimation</p>
 <p>You can also compute the \(l_\infty\)-error of normal vector estimation, by computing the maximum of angle errors. For the \(l_2\)-error, the easiest way is to compute the squared root of the variance of angle errors. Use <code>ShorcutsGeometry::getStatistic</code> to get a statistic object from  your vector of angle errors.</p>
 <p>For the <code>sphere9</code> object, you would get something like:</p>
-<div class="table-wrapper"><table><thead><tr><th>sphere9</th><th>\(l_\infty\)-error (T)</th><th>\(l_\infty\)-error (CT)</th><th>$l_\infty$-error (II)</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>sphere9</th><th>\(l_\infty\)-error (T)</th><th>\(l_\infty\)-error (CT)</th><th>\(l_\infty\)-error (II)</th></tr></thead><tbody>
 <tr><td>\(h=1\)</td><td>1.516</td><td>0.141</td><td>0.139</td></tr>
 <tr><td>\(h=0.5\)</td><td>1.543</td><td>0.190</td><td>0.077</td></tr>
 <tr><td>\(h=0.25\)</td><td>1.557</td><td>0.183</td><td>0.041</td></tr>
@@ -233,23 +234,17 @@ You  can for instance add the computation of the trivial (T),  the convolved tri
 <h2 id="two-methods-for-estimating-the-area"><a class="header" href="#two-methods-for-estimating-the-area">Two methods for estimating the area</a></h2>
 <p>We propose two methods for computing the area, both of them works with local summations involving normal vectors. Let \(\mathbf{X}\) be the smooth implicit shape, \(\mathbf{X}_h\) its Gauss digitization at step \(h\). Let us denote \((\mathbf{t}_i)\) the trivial normal vectors for each surfel \(i\), and \((\mathbf{u}_i)\) any one of your estimated normal vector field. We will also use \((\mathbf{n}_i)\) as the exact normal vector field (it is the true normal of the implicit surface at the nearest point to the surfel centroid).</p>
 <ol>
-<li>
-<p>The first method, sometimes called Euler integration, takes the  scalar product of the trivial normal with the estimated normal (formula related to classical integration change of variables):
-\[
-\widehat{\mathrm{Area}_1}(\mathbf{X}<em>h,h) := h^2 \sum</em>{\text{surfels}<del>i</del>\text{of}~X_h} \mathbf{t}_i  \cdot \mathbf{u}_i.
-\]</p>
-</li>
-<li>
-<p>The second method, proposed in <sup class="footnote-reference"><a href="#6">1</a></sup>, takes the inverse  of the $l_1$-norm of each estimated normal vector (formula related more to a statiscal analysis of digital planes):</p>
-</li>
+<li>The first method, sometimes called Euler integration, takes the  scalar product of the trivial normal with the estimated normal (formula related to classical integration change of variables): \[
+\widehat{\mathrm{Area}_1}(\mathbf{X}_h,h) := h^2 \sum_{\text{surfels}~i~\text{of}~X_h} \mathbf{t}_i  \cdot \mathbf{u}_i.
+\]</li>
+<li>The second method, proposed in <sup class="footnote-reference"><a href="#6">1</a></sup>, takes the inverse  of the $l_1$-norm of each estimated normal vector (formula related more to a statiscal analysis of digital planes): \[ \widehat{\mathrm{Area}_2}(\mathbf{X}_h,h) := h^2 \sum_{\text{surfels}~i~\text{of}~X_h} \frac{1}{|\mathbf{u}_i|_1}. \]</li>
 </ol>
-<p>\[ \widehat{\mathrm{Area}_2}(\mathbf{X}<em>h,h) := h^2 \sum</em>{\text{surfels}<del>i</del>\text{of}~X_h} \frac{1}{|\mathbf{u}_i|_1}. \]</p>
 <p><strong>Exercise</strong>: Compute the estimated area using both methods
 Use the formulas above and your normal vector fields to perform the area estimations. You may display the result in your GUI with something like:</p>
 <pre><code class="language-cpp">ImGui::Text( "Area1=%f Area2=%f", Area1, Area2 );
 </code></pre>
 <p>For a sphere of radius \(r\), the true area is \(4 \pi r^2\), hence for <code>sphere9</code> , expect \(1017.87601976309300925456\).</p>
-<h2 id="checking-the-multigrid-convergence"><a class="header" href="#checking-the-multigrid-convergence">Checking the multigrid convergence</a></h2>
+<h2 id="optional-checking-the-multigrid-convergence"><a class="header" href="#optional-checking-the-multigrid-convergence">(Optional) Checking the multigrid convergence</a></h2>
 <p>A natural question is if these area estimates tends to the area of the Euclidean shape as the digitization gets finer and finer, aka are your area estimators <strong>multigrid convergent</strong> <sup class="footnote-reference"><a href="#3">2</a></sup> ?</p>
 <p>For Euler integration method (method 1), Theorem 4 <sup class="footnote-reference"><a href="#5">3</a></sup> asserts that \(\widehat{\mathrm{Area}_1}\) estimator is multigrid convergent as long as the estimated normal vector field \(\mathbf{u}\) is itself convergent. The worst-case speed is then of the same order.</p>
 <p>Convergence of (II) normal vector field is proven in <sup class="footnote-reference"><a href="#1">4</a></sup> and its speed of convergence is explicited in <sup class="footnote-reference"><a href="#4">5</a></sup>. Convergence of (VCM) normal vector field is proven in <sup class="footnote-reference"><a href="#2">6</a></sup>.</p>
@@ -258,7 +253,7 @@ Use the formulas above and your normal vector fields to perform the area estimat
 <p><strong>Exercise</strong>: compute areas for a sequence of shapes with finer and finer digitization.
 You may either use your GUI to compute by hand each error, or creates a new button that launches these computations, without creating a shape in the polyscope interface (copy/paste is your friend).</p>
 <p>For a sphere object, you have easily the true area $A$, so the relative error is computed as \(\left|\frac{\widehat{\mathrm{Area}_k}(\mathbf{X}_h,h)-A}{A}\right|\).</p>
-<p>For other shapes, you can have an idea of the convergence by using the area estimator with  the true normal vector field $\mathbf{n}$. In some sense, you cannot expect a better result at the given  resolution.</p>
+<p>For other shapes, you can have an idea of the convergence by using the area estimator with  the true normal vector field \(\mathbf{n}\). In some sense, you cannot expect a better result at the given  resolution.</p>
 <p>The  table below displays the relative error for method 1 (Euler Integration):</p>
 <div class="table-wrapper"><table><thead><tr><th><code>sphere9</code></th><th>\( \mathbf{u}= \)(T)</th><th>\( \mathbf{u}= \)(CT)</th><th>\( \mathbf{u}= \)(II)</th></tr></thead><tbody>
 <tr><td>\(h=1\)</td><td>\(49.134\)%</td><td>\(3.200\)%</td><td>\(0.369\)%</td></tr>
@@ -299,6 +294,9 @@ You may either use your GUI to compute by hand each error, or creates a new butt
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next prefetch" href="../estimators/operators.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -310,6 +308,9 @@ You may either use your GUI to compute by hand each error, or creates a new butt
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next prefetch" href="../estimators/operators.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

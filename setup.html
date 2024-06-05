@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="setup.html" class="active"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="setup.html" class="active"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="estimators/start.html"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li><li class="chapter-item expanded "><a href="estimators/operators.html"><strong aria-hidden="true">3.3.</strong> Differential calculus operators</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -184,12 +184,20 @@
 <li>openGL headers (for polyscope visualization)</li>
 </ul>
 <h2 id="building-the-code"><a class="header" href="#building-the-code">Building the code</a></h2>
-<p>First clone the repo at https://github.com/Lieunoir/DGtal-tutorial-jcgeo24</p>
-<p>We setup in Release mode otherwise some parts will be running way too slow</p>
+<p>First clone <a href="https://github.com/Lieunoir/DGtal-tutorial-jcgeo24">the repo</a></p>
+<p>Then, to prepare to build the code :</p>
 <pre><code class="language-bash">mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
+cd ..
 </code></pre>
+<p>To build then run the example :</p>
+<pre><code class="language-bash">cmake --build build --target examplePolyscope -- -j 8
+./build/examplePolyscope
+</code></pre>
+<p>(change <code>-j 8</code> to how many core you want to use on your machine)</p>
+<p>We setup in Release mode otherwise some parts will be running way too slow</p>
+<p>Each practical has its corresponding file to complete, as well as a cmake target (change the <code>--target</code> parameter accordingly)</p>
 
                     </main>
 

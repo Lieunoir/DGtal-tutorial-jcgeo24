@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="../thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="../estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../estimators/start.html" class="active"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="../estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Practicals</li><li class="chapter-item expanded "><a href="../thinning.html"><strong aria-hidden="true">2.</strong> Homotopic thinning</a></li><li class="chapter-item expanded "><a href="../estimators.html"><strong aria-hidden="true">3.</strong> Estimators and differential calculus</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../estimators/start.html" class="active"><strong aria-hidden="true">3.1.</strong> Getting started</a></li><li class="chapter-item expanded "><a href="../estimators/estimations.html"><strong aria-hidden="true">3.2.</strong> 3D geometric estimations</a></li><li class="chapter-item expanded "><a href="../estimators/operators.html"><strong aria-hidden="true">3.3.</strong> Differential calculus operators</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -176,11 +176,11 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="getting-started"><a class="header" href="#getting-started">Getting started</a></h1>
-<p>In the DGtal-DGMM <code>practical-3D-estimation</code> repository, have a look to the <code>3D-estimation-template.cpp</code> file. If you are in your build repository, it should compile as is and is executed simply in the command line with</p>
-<pre><code>./3D-estimation-template
+<p>Have a look to the <code>surface-estimators.cpp</code> file. If you are in your build repository, it should compile as is and is executed simply in the command line with</p>
+<pre><code>./surface-estimators
 </code></pre>
 <p>You may choose your implicit shape and digitization step. The program computes the digital surface in-between interior/exterior points, then convert it to a polygonal quad mesh called <em>primal surface</em>. It is its natural digital embedding as the boundary of a union of voxels.</p>
-<div class="table-wrapper"><table><thead><tr><th>sphere9 $h=0.5$</th><th>torus $h=0.5$</th><th>torus $h=0.25$</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>sphere9 \(h=0.5\)</th><th>torus \(h=0.5\)</th><th>torus \(h=0.25\)</th></tr></thead><tbody>
 <tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_2d96ecd7b599f5805fc1cdf307d838d1.jpg" alt="sphere9" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_cad5a603a5c15e2620c65a54632d44da.jpg" alt="torus" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_54927d37c1cef31bf7b536b6fc2f1880.jpg" alt="torus_fine" /></td></tr>
 </tbody></table>
 </div><details><summary>Primal surface?
@@ -189,7 +189,7 @@ The primal surface of a digital object corresponds to an embedding of the [digit
 </details>
 <p><strong>Exercise</strong> : add new shapes
 You may start your practical by adding a few implicitly defined shapes to the program. "goursat", "leopold", "goursat-hole" are popular examples. Expect one line of code per shape.</p>
-<div class="table-wrapper"><table><thead><tr><th>goursat $h=0.25$</th><th>leopold $h=0.25$</th><th>goursat hole $h=0.25$</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>goursat \(h=0.25\)</th><th>leopold \(h=0.25\)</th><th>goursat hole \(h=0.25\)</th></tr></thead><tbody>
 <tr><td><img src="https://codimd.math.cnrs.fr/uploads/upload_dc375cc62be79bf7249cc6f6bcc5543c.jpg" alt="goursat" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_1d02d86177f794f9c5c8714a28a32cd4.jpg" alt="leopold" /></td><td><img src="https://codimd.math.cnrs.fr/uploads/upload_0d902e6d23edc2b30de341f86a52c7a3.jpg" alt="goursat-hole" /></td></tr>
 </tbody></table>
 </div>
