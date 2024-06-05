@@ -477,7 +477,7 @@ By integrating over the surface on both side (meaning we multiply by \(M\) we ge
 You can also add a slider to add a multiplicative constant to this formula and see the results.</p>
 <h5 id="inverting-dt"><a class="header" href="#inverting-dt">Inverting \(dt\)</a></h5>
 <p>Since we use <code>Eigen</code>, we also have access to some linear algebrea solvers. In particular, to solve for \(x\) in \(Ax=b\), you can use the following lines :</p>
-<pre><code class="language-cp">typedef EigenLinearAlgebraBackend::SolverSimplicialLDLT Solver;
+<pre><code class="language-cpp">typedef EigenLinearAlgebraBackend::SolverSimplicialLDLT Solver;
 typedef EigenLinearAlgebraBackend::DenseVector DenseVector;
 Solver solver;
 solver.compute(A);
