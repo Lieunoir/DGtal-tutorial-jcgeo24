@@ -177,7 +177,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>This is a shot tutorial for the DGtal library. It is largely based on the <a href="https://github.com/DGtal-team/DGtal-Tutorials-DGMM2022/tree/main">DGMM2022 Tutorial</a></p>
+<p>This is a short tutorial for the DGtal library. It is largely based on the <a href="https://github.com/DGtal-team/DGtal-Tutorials-DGMM2022/tree/main">DGMM2022 Tutorial</a></p>
 <p>It is composed of a two practicals, that can be done in any order :</p>
 <ul>
 <li>a short around homotopy thinning, more oriented around topology manipulations</li>
@@ -493,7 +493,7 @@ DenseVector x = solver.solve(b);
 </li>
 </ul>
 <div class="table-wrapper"><table><thead><tr><th>Heat source</th><th>Diffused heat</th></tr></thead><tbody>
-<tr><td><img src="estimators//images/diffuse-source.webp" alt="Heat Source" /></td><td><img src="estimators//images/diffused.webp" alt="Diffused Heat" /></td></tr>
+<tr><td><img src="estimators/../images/diffuse-source.webp" alt="Heat Source" /></td><td><img src="estimators/../images/diffused.webp" alt="Diffused Heat" /></td></tr>
 </tbody></table>
 </div>
 <h2 id="smooth-data-interpolation"><a class="header" href="#smooth-data-interpolation"><a name="dirichlet"></a> Smooth data interpolation</a></h2>
@@ -501,7 +501,7 @@ DenseVector x = solver.solve(b);
 <p>There is a <a href="https://lieunoir.github.io/DGtal/classDGtal_1_1DirichletConditions.html">helper class</a> to solve Dirichlet problems. You can see how to use it <a href="https://lieunoir.github.io/DGtal/moduleNormalCorrectedFEM.html#secLap">here</a> (except that this example uses the border of the surface instead of randomly selected points).</p>
 <p><strong>Exercise</strong>: select a few random points that will act as constraints. Interpolate with a harmonic function. Show the resulting function. Again, you can change the attached normals to the mesh and rebuild to see if it makes significant changes.</p>
 <div class="table-wrapper"><table><thead><tr><th>Initial values</th><th>Interpolating function</th></tr></thead><tbody>
-<tr><td><img src="estimators//images/interpoalte-source.webp" alt="Heat Source" /></td><td><img src="estimators//images/interpoalted.webp" alt="Diffused Heat" /></td></tr>
+<tr><td><img src="estimators/../images/interpoalte-source.webp" alt="Heat Source" /></td><td><img src="estimators/../images/interpoalted.webp" alt="Diffused Heat" /></td></tr>
 </tbody></table>
 </div>
 <h2 id="heat-geodesics"><a class="header" href="#heat-geodesics">Heat geodesics</a></h2>
@@ -524,7 +524,7 @@ DenseVector x = solver.solve(b);
 <p>This method requires normals atached to vertices, not to faces as we currently have. There is a method available to SurfaceMeshes in order to compute vertex normals from face normals, use it!</p>
 <p><strong>Exercise</strong>: Choose an arbitrary point randomly, and compute geodesic distance to it using the geodesic method. Display the resulting values in polyscope.</p>
 <div class="table-wrapper"><table><thead><tr><th>Source</th><th>Geodesics</th></tr></thead><tbody>
-<tr><td><img src="estimators//images/geodesics-source.webp" alt="Heat Source" /></td><td><img src="estimators//images/geodesics.webp" alt="Diffused Heat" /></td></tr>
+<tr><td><img src="estimators/../images/geodesics-source.webp" alt="Heat Source" /></td><td><img src="estimators/../images/geodesics.webp" alt="Diffused Heat" /></td></tr>
 </tbody></table>
 </div>
 <h1 id="references-2"><a class="header" href="#references-2">References</a></h1>
